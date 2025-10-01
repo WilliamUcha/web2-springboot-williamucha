@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="'Resultados para: ' + ${termoBusca}">Resultados da Busca</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+	<style>
+		.curso-card {
+			transition: transform 0.2s;
+		}
+		.curso-card:hover {
+			transform: translateY(-5px);
+		}
+	</style>
+</head>
+<body>
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<i class="fas fa-graduation-cap"></i> EduSystem
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/">Home</a>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+							Categorias
+						</a>
+						<ul class="dropdown-menu" th:if="${categorias}">
+							<li th:each="cat : ${categorias}">
+								<a class="dropdown-item" th:href="@{/categoria/{id}(id=${cat.id})}" 
+								   th:text="${cat.nome}">Categoria</a>
+							</li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item" href="/categoria/listar">Gerenciar Categorias</a></li>
+						</ul>
+					</li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+							Administração
+						</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="/curso/listar">Cursos</a></li>
+							<li><a class="dropdown-item" href="/categoria/listar">Categorias</a></li>
+							<li><a class="dropdown-item" href="/professor/listar">Professores</a></li>
+						</ul>
+					</li>
+				</ul>
+				
+				<!-- Busca -->
+				<form class="d-flex" method="post" action="/buscar">
+					<input class="form-control me-2" type="search" name="busca" th:value="${termoBusca}" 
+						   placeholder="Buscar cursos..." aria-label="Search">
+					<button class="btn btn-outline-light" type="submit">
+						<i class="fas fa-search"></i>
+					</button>
+				</form>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container py-4">
+		<!-- Breadcrumb -->
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/">Home</a></li>
+				<li class="breadcrumb-item active">Resultados da Busca</li>
+			</ol>
+		</nav>
+
+		<!-- Cabeçalho dos Resultados -->
+		<div class="bg-light p-4 rounded mb-4">
+			<h1 class="h2 mb-2">
+				Resultados para: "<span class="text-primary" th:text="${termoBusca}">termo de busca</span>"
+			</h1>
+			<p class="mb-0 text-muted">
+				<span th:text="${#lists.size(cursos)}">0</span> 
+				<span th:text="${#lists.size(cursos) == 1} ? 'curso encontrado' : 'cursos encontrados'">cursos encontrados</span>
+			</p>
+		</div>
+
+		<!-- Resultados -->
+		<div class="row" th:if="${cursos != null and not #lists.isEmpty(cursos)}">
+			<div class="col-lg-4 col-md-6 mb-4" th:each="curso : ${cursos}">
+				<div class="card curso-card shadow-sm h-100">
+					<div class="card-img-top bg-primary d-flex align-items-center justify-content-center" 
+						 style="height: 200px;" th:if="${curso.imagem == null or curso.imagem == ''}">
+						<i class="fas fa-book-open fa-3x text-white"></i>
+					</div>
+					<img th:if="${curso.imagem != null and curso.imagem != ''}" 
+						 th:src="@{/curso/imagem/{imagem}(imagem=${curso.imagem})}" 
+						 class="card-img-top" style="height: 200px; object-fit: cover;" 
+						 th:alt="${curso.nome}">
+					<div class="card-body d-flex flex-column">
+						<h5 class="card-title" th:text="${curso.nome}">Nome do Curso</h5>
+						<p class="card-text text-muted flex-grow-1" th:text="${curso.descricao}">Descrição do curso...</p>
+						<div class="mt-auto">
+							<div class="d-flex justify-content-between align-items-center mb-2">
+								<small class="text-muted">
+									<i class="fas fa-user"></i> 
+									<span th:text="${curso.professor.nome}">Professor</span>
+								</small>
+								<a th:href="@{/categoria/{id}(id=${curso.categoria.id})}" 
+								   class="badge bg-secondary text-decoration-none" th:text="${curso.categoria.nome}">Categoria</a>
+							</div>
+							<div class="d-flex justify-content-between align-items-center">
+								<div>
+									<span class="h6 text-primary" th:if="${curso.preco != null}" 
+										  th:text="'R$ ' + ${#numbers.formatDecimal(curso.preco, 0, 2)}">Preço</span>
+									<small class="text-muted ms-2" th:if="${curso.cargaHoraria != null}"
+										   th:text="${curso.cargaHoraria} + 'h'">Carga Horária</small>
+								</div>
+								<a th:href="@{/curso/{id}(id=${curso.id})}" class="btn btn-primary btn-sm">
+									<i class="fas fa-eye"></i> Ver Detalhes
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Nenhum resultado encontrado -->
+		<div class="text-center py-5" th:if="${cursos == null or #lists.isEmpty(cursos)}">
+			<i class="fas fa-search fa-4x text-muted mb-3"></i>
+			<h3>Nenhum curso encontrado</h3>
+			<p class="text-muted">
+				Não encontramos cursos com o termo "<strong th:text="${termoBusca}">termo de busca</strong>".
+			</p>
+			<div class="mt-4">
+				<h5>Sugestões:</h5>
+				<ul class="list-unstyled">
+					<li>• Verifique se o termo está escrito corretamente</li>
+					<li>• Tente usar palavras-chave diferentes</li>
+					<li>• Use termos mais gerais</li>
+				</ul>
+			</div>
+			<div class="mt-4">
+				<a href="/" class="btn btn-primary me-2">
+					<i class="fas fa-home"></i> Voltar ao Início
+				</a>
+				<a href="/curso/listar" class="btn btn-outline-primary">
+					<i class="fas fa-list"></i> Ver Todos os Cursos
+				</a>
+			</div>
+		</div>
+
+		<!-- Explorar por categorias -->
+		<div class="mt-5" th:if="${categorias != null and not #lists.isEmpty(categorias)}">
+			<h4 class="mb-3">Explorar por Categoria</h4>
+			<div class="row">
+				<div class="col-auto mb-2" th:each="categoria : ${categorias}">
+					<a th:href="@{/categoria/{id}(id=${categoria.id})}" 
+					   class="btn btn-outline-primary">
+						<i class="fas fa-folder-open"></i> 
+						<span th:text="${categoria.nome}">Categoria</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer class="bg-dark text-white py-4 mt-5">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<h5>EduSystem</h5>
+					<p>Plataforma completa para gerenciamento de cursos online.</p>
+				</div>
+				<div class="col-md-6">
+					<h5>Links Rápidos</h5>
+					<ul class="list-unstyled">
+						<li><a href="/" class="text-light text-decoration-none">Home</a></li>
+						<li><a href="/curso/listar" class="text-light text-decoration-none">Todos os Cursos</a></li>
+						<li><a href="/categoria/listar" class="text-light text-decoration-none">Categorias</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

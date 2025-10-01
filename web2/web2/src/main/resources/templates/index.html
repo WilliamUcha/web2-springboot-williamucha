@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSystem - Sistema de Cursos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            color: #667eea !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #555 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+        
+        .hero-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 4rem 2rem;
+            margin: 3rem 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .display-4 {
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .lead {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, var(--card-color), var(--card-color-light));
+        }
+        
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            background: linear-gradient(45deg, var(--card-color), var(--card-color-light));
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .btn-custom {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            background: linear-gradient(45deg, var(--card-color), var(--card-color-light));
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .categorias-card {
+            --card-color: #667eea;
+            --card-color-light: #764ba2;
+        }
+        
+        .professores-card {
+            --card-color: #28a745;
+            --card-color-light: #20c997;
+        }
+        
+        .cursos-card {
+            --card-color: #ffc107;
+            --card-color-light: #fd7e14;
+        }
+        
+        .usuarios-card {
+            --card-color: #17a2b8;
+            --card-color-light: #6f42c1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>
+                EduSystem
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriasDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-tags me-1"></i>Categorias
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li th:each="categoria : ${categorias}">
+                                <a class="dropdown-item" th:href="@{/categoria/{id}(id=${categoria.id})}" th:text="${categoria.nome}">Categoria</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/categoria/listar"><i class="fas fa-cog me-1"></i>Gerenciar Categorias</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/professor/listar">
+                            <i class="fas fa-chalkboard-teacher me-1"></i>Professores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/curso/listar">
+                            <i class="fas fa-book me-1"></i>Cursos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 100px;">
+        <div class="hero-section">
+            <h1 class="display-4 mb-3">Bem-vindo ao EduSystem</h1>
+            <p class="lead">Plataforma completa para gerenciamento de cursos online</p>
+            <p>Organize seus cursos, professores e categorias de forma moderna e eficiente</p>
+        </div>
+
+        <div class="row g-4 mb-5 justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card categorias-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Categorias</h5>
+                        <p class="card-text text-muted">Organize e classifique seus cursos por áreas de conhecimento</p>
+                        <a href="/categoria/listar" class="btn btn-custom text-white">Gerenciar</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card professores-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Professores</h5>
+                        <p class="card-text text-muted">Cadastre e gerencie o corpo docente da sua plataforma</p>
+                        <a href="/professor/listar" class="btn btn-custom text-white">Gerenciar</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card cursos-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h5 class="card-title fw-bold">Cursos</h5>
+                        <p class="card-text text-muted">Crie e administre todo o conteúdo educacional</p>
+                        <a href="/curso/listar" class="btn btn-custom text-white">Gerenciar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Categorias -->
+        <div th:if="${categorias != null && !categorias.empty}" class="mt-5">
+            <div class="text-center mb-4">
+                <h2 class="text-white mb-3">
+                    <i class="fas fa-tags me-2"></i>Explore por Categoria
+                </h2>
+                <p class="text-light">Descubra cursos organizados por área de conhecimento</p>
+            </div>
+            
+            <div class="row g-4">
+                <div th:each="categoria : ${categorias}" class="col-md-6 col-lg-4">
+                    <div class="card feature-card h-100">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="fas fa-tag fa-3x text-primary"></i>
+                            </div>
+                            <h5 class="card-title fw-bold" th:text="${categoria.nome}">Nome da Categoria</h5>
+                            <p class="card-text text-muted" th:text="${categoria.descricao ?: 'Explore os cursos desta categoria'}">Descrição da categoria</p>
+                            
+                            <!-- Mostrar quantidade de cursos -->
+                            <div class="mb-3">
+                                <span class="badge bg-info">Categoria</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a th:href="@{/categoria/{id}(id=${categoria.id})}" class="btn btn-primary w-100">
+                                <i class="fas fa-eye me-2"></i>Ver Cursos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensagem quando não há categorias -->
+        <div th:if="${categorias == null || categorias.empty}" class="mt-5">
+            <div class="text-center">
+                <div class="page-header">
+                    <i class="fas fa-tags fa-5x mb-3 text-white opacity-75"></i>
+                    <h4 class="text-white">Nenhuma categoria encontrada</h4>
+                    <p class="text-light">Cadastre categorias para organizar seus cursos.</p>
+                    <a href="/categoria/listar" class="btn btn-outline-light">
+                        <i class="fas fa-plus me-2"></i>Gerenciar Categorias
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

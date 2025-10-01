@@ -1,0 +1,37 @@
+# Build directories
+target/
+build/
+out/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Test files (personalizados)
+*test*.html
+*Test*.java (except official test files)
+*backup*
+*temp*
+
+# Upload directories (se não quiser versionar)
+uploads/
+src/main/resources/static/img/uploads/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar

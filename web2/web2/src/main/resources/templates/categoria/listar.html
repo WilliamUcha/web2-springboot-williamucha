@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gerenciar Categorias - EduSystem</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			font-family: 'Poppins', sans-serif;
+		}
+		
+		body {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+		}
+		
+		.navbar {
+			background: rgba(255, 255, 255, 0.95) !important;
+			backdrop-filter: blur(10px);
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+		}
+		
+		.navbar-brand {
+			color: #667eea !important;
+			font-weight: 600;
+		}
+		
+		.nav-link {
+			color: #555 !important;
+			font-weight: 500;
+		}
+		
+		.nav-link:hover, .nav-link.active {
+			color: #667eea !important;
+		}
+		
+		.main-content {
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(10px);
+			border-radius: 20px;
+			margin-top: 100px;
+			padding: 2rem;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+		}
+		
+		.page-header {
+			background: linear-gradient(135deg, #667eea, #764ba2);
+			color: white;
+			padding: 2rem;
+			border-radius: 15px;
+			margin-bottom: 2rem;
+			text-align: center;
+		}
+		
+		.btn-modern {
+			padding: 12px 30px;
+			border-radius: 50px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+			border: none;
+		}
+		
+		.btn-modern:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		}
+		
+		.table-modern {
+			background: white;
+			border-radius: 15px;
+			overflow: hidden;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+		}
+		
+		.table thead th {
+			background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+			color: #495057;
+			font-weight: 600;
+			border: none;
+			padding: 1rem;
+		}
+		
+		.table tbody tr:hover {
+			background-color: #f8f9fa;
+			transform: scale(1.01);
+			transition: all 0.2s ease;
+		}
+		
+		.table td {
+			padding: 1rem;
+			vertical-align: middle;
+		}
+		
+		.btn-sm-modern {
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+		
+		.empty-state {
+			padding: 4rem 2rem;
+		}
+		
+		.empty-state i {
+			color: #dee2e6;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<i class="fas fa-graduation-cap me-2"></i>
+				EduSystem
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" href="/categoria/listar">
+							<i class="fas fa-tags me-1"></i>Categorias
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/professor/listar">
+							<i class="fas fa-chalkboard-teacher me-1"></i>Professores
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/curso/listar">
+							<i class="fas fa-book me-1"></i>Cursos
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="main-content">
+			<div class="page-header">
+				<h1><i class="fas fa-tags me-3"></i>Gerenciar Categorias</h1>
+				<p class="mb-0">Organize e classifique seus cursos por áreas de conhecimento</p>
+			</div>
+			
+			<!-- Mensagens -->
+			<div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show">
+				<i class="fas fa-check-circle me-2"></i>
+				<span th:text="${sucesso}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+			<div th:if="${erro}" class="alert alert-danger alert-dismissible fade show">
+				<i class="fas fa-exclamation-triangle me-2"></i>
+				<span th:text="${erro}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<a href="/categoria/inserir" class="btn btn-success btn-modern">
+					<i class="fas fa-plus me-2"></i>Nova Categoria
+				</a>
+				<a href="/" class="btn btn-outline-secondary btn-modern">
+					<i class="fas fa-home me-2"></i>Voltar ao Início
+				</a>
+			</div>
+			
+			<div th:if="${categorias != null && !categorias.empty}">
+				<div class="table-responsive">
+					<table class="table table-modern mb-0">
+						<thead>
+							<tr>
+								<th><i class="fas fa-hashtag me-2"></i>ID</th>
+								<th><i class="fas fa-tag me-2"></i>Nome</th>
+								<th><i class="fas fa-align-left me-2"></i>Descrição</th>
+								<th class="text-center"><i class="fas fa-cogs me-2"></i>Ações</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="categoria : ${categorias}">
+								<td class="fw-bold text-primary" th:text="${categoria.id}">1</td>
+								<td>
+									<span class="badge bg-primary rounded-pill px-3 py-2" th:text="${categoria.nome}">Nome</span>
+								</td>
+								<td th:text="${categoria.descricao}">Descrição</td>
+								<td class="text-center">
+									<div class="btn-group" role="group">
+										<a th:href="@{/categoria/editar/{id}(id=${categoria.id})}" 
+										   class="btn btn-sm btn-outline-primary btn-sm-modern"
+										   title="Editar categoria">
+											<i class="fas fa-edit me-1"></i>Editar
+										</a>
+										<a th:href="@{/categoria/excluir/{id}(id=${categoria.id})}" 
+										   class="btn btn-sm btn-outline-danger btn-sm-modern"
+										   onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"
+										   title="Excluir categoria">
+											<i class="fas fa-trash me-1"></i>Excluir
+										</a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div th:if="${categorias == null || categorias.empty}" class="text-center empty-state">
+				<div class="mb-4">
+					<i class="fas fa-tags fa-5x mb-3"></i>
+					<h4 class="text-muted">Nenhuma categoria cadastrada</h4>
+					<p class="text-muted">Comece criando a primeira categoria para organizar seus cursos.</p>
+				</div>
+				<a href="/categoria/inserir" class="btn btn-primary btn-modern">
+					<i class="fas fa-plus me-2"></i>Criar Primeira Categoria
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

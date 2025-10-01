@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Gerenciar Cursos - EduSystem</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			font-family: 'Poppins', sans-serif;
+		}
+		
+		body {
+			background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+			min-height: 100vh;
+		}
+		
+		.navbar {
+			background: rgba(255, 255, 255, 0.95) !important;
+			backdrop-filter: blur(10px);
+			box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+		}
+		
+		.navbar-brand {
+			color: #ffc107 !important;
+			font-weight: 600;
+		}
+		
+		.nav-link {
+			color: #555 !important;
+			font-weight: 500;
+		}
+		
+		.nav-link:hover, .nav-link.active {
+			color: #ffc107 !important;
+		}
+		
+		.main-content {
+			background: rgba(255, 255, 255, 0.95);
+			backdrop-filter: blur(10px);
+			border-radius: 20px;
+			margin-top: 100px;
+			padding: 2rem;
+			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+		}
+		
+		.page-header {
+			background: linear-gradient(135deg, #ffc107, #fd7e14);
+			color: white;
+			padding: 2rem;
+			border-radius: 15px;
+			margin-bottom: 2rem;
+			text-align: center;
+		}
+		
+		.btn-modern {
+			padding: 12px 30px;
+			border-radius: 50px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+			border: none;
+		}
+		
+		.btn-modern:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		}
+		
+		.table-modern {
+			background: white;
+			border-radius: 15px;
+			overflow: hidden;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+		}
+		
+		.table thead th {
+			background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+			color: #495057;
+			font-weight: 600;
+			border: none;
+			padding: 1rem;
+		}
+		
+		.table tbody tr:hover {
+			background-color: #f8f9fa;
+			transform: scale(1.01);
+			transition: all 0.2s ease;
+		}
+		
+		.table td {
+			padding: 1rem;
+			vertical-align: middle;
+		}
+		
+		.btn-sm-modern {
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+		
+		.curso-icon {
+			width: 50px;
+			height: 50px;
+			border-radius: 10px;
+			background: linear-gradient(135deg, #ffc107, #fd7e14);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-size: 1.5rem;
+		}
+		
+		.price-badge {
+			background: linear-gradient(135deg, #28a745, #20c997);
+			color: white;
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-weight: 600;
+		}
+		
+		.free-badge {
+			background: linear-gradient(135deg, #6c757d, #495057);
+			color: white;
+			padding: 8px 16px;
+			border-radius: 20px;
+			font-weight: 600;
+		}
+		
+		.empty-state {
+			padding: 4rem 2rem;
+		}
+		
+		.empty-state i {
+			color: #dee2e6;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg fixed-top">
+		<div class="container">
+			<a class="navbar-brand" href="/">
+				<i class="fas fa-graduation-cap me-2"></i>
+				EduSystem
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/categoria/listar">
+							<i class="fas fa-tags me-1"></i>Categorias
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/professor/listar">
+							<i class="fas fa-chalkboard-teacher me-1"></i>Professores
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active" href="/curso/listar">
+							<i class="fas fa-book me-1"></i>Cursos
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/usuario/listar">
+							<i class="fas fa-users me-1"></i>Usuários
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<div class="main-content">
+			<div class="page-header">
+				<h1><i class="fas fa-book me-3"></i>Gerenciar Cursos</h1>
+				<p class="mb-0">Crie e administre todo o conteúdo educacional</p>
+			</div>
+			
+			<!-- Mensagens -->
+			<div th:if="${sucesso}" class="alert alert-success alert-dismissible fade show">
+				<i class="fas fa-check-circle me-2"></i>
+				<span th:text="${sucesso}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+			<div th:if="${erro}" class="alert alert-danger alert-dismissible fade show">
+				<i class="fas fa-exclamation-triangle me-2"></i>
+				<span th:text="${erro}"></span>
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<a href="/curso/inserir" class="btn btn-warning btn-modern text-dark">
+					<i class="fas fa-plus me-2"></i>Novo Curso
+				</a>
+				<a href="/" class="btn btn-outline-secondary btn-modern">
+					<i class="fas fa-home me-2"></i>Voltar ao Início
+				</a>
+			</div>
+			
+			<div th:if="${cursos != null && !cursos.empty}">
+				<div class="table-responsive">
+					<table class="table table-modern mb-0">
+						<thead>
+							<tr>
+								<th><i class="fas fa-hashtag me-2"></i>ID</th>
+								<th><i class="fas fa-book me-2"></i>Curso</th>
+								<th><i class="fas fa-tag me-2"></i>Categoria</th>
+								<th><i class="fas fa-chalkboard-teacher me-2"></i>Professor</th>
+								<th><i class="fas fa-calendar-alt me-2"></i>Período</th>
+								<th><i class="fas fa-money-bill-wave me-2"></i>Preço</th>
+								<th><i class="fas fa-clock me-2"></i>C.H.</th>
+								<th class="text-center"><i class="fas fa-cogs me-2"></i>Ações</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="curso : ${cursos}">
+								<td class="fw-bold text-primary" th:text="${curso.id}">1</td>
+								<td>
+									<div class="d-flex align-items-center">
+										<div class="curso-icon me-3">
+											<i class="fas fa-book"></i>
+										</div>
+										<div>
+											<div class="fw-bold" th:text="${curso.nome}">Nome do Curso</div>
+											<small class="text-muted">Curso</small>
+										</div>
+									</div>
+								</td>
+								<td>
+									<span class="badge bg-info rounded-pill px-3 py-2" 
+									      th:text="${curso.categoria != null ? curso.categoria.nome : '-'}">Categoria</span>
+								</td>
+								<td>
+									<div th:if="${curso.professor != null}">
+										<i class="fas fa-user-tie text-muted me-2"></i>
+										<span th:text="${curso.professor.nome}">Professor</span>
+									</div>
+									<div th:if="${curso.professor == null}" class="text-muted">
+										<i class="fas fa-minus-circle me-2"></i>Não definido
+									</div>
+								</td>
+								<td>
+									<div th:if="${curso.dataInicio != null and curso.dataFinal != null}">
+										<i class="fas fa-calendar-alt text-success me-1"></i>
+										<small class="d-block">
+											<span th:text="${#temporals.format(curso.dataInicio, 'dd/MM/yyyy')}">01/01/2024</span>
+										</small>
+										<i class="fas fa-calendar-check text-danger me-1"></i>
+										<small class="d-block">
+											<span th:text="${#temporals.format(curso.dataFinal, 'dd/MM/yyyy')}">31/12/2024</span>
+										</small>
+									</div>
+									<div th:if="${curso.dataInicio == null or curso.dataFinal == null}" class="text-muted">
+										<i class="fas fa-calendar-times me-2"></i>Não definido
+									</div>
+								</td>
+								<td>
+									<span th:if="${curso.preco != null && curso.preco > 0}" 
+									      class="price-badge"
+									      th:text="'R$ ' + ${#numbers.formatDecimal(curso.preco, 0, 2)}">R$ 0,00</span>
+									<span th:if="${curso.preco == null || curso.preco == 0}" 
+									      class="free-badge">Gratuito</span>
+								</td>
+								<td>
+									<i class="fas fa-clock text-warning me-2"></i>
+									<span th:text="${curso.cargaHoraria != null ? curso.cargaHoraria + 'h' : 'Não definida'}">0h</span>
+								</td>
+								<td class="text-center">
+									<div class="btn-group" role="group">
+										<a th:href="@{/curso/editar/{id}(id=${curso.id})}" 
+										   class="btn btn-sm btn-outline-primary btn-sm-modern"
+										   title="Editar curso">
+											<i class="fas fa-edit me-1"></i>Editar
+										</a>
+										<a th:href="@{/curso/excluir/{id}(id=${curso.id})}" 
+										   class="btn btn-sm btn-outline-danger btn-sm-modern"
+										   onclick="return confirm('Tem certeza que deseja excluir este curso?')"
+										   title="Excluir curso">
+											<i class="fas fa-trash me-1"></i>Excluir
+										</a>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div th:if="${cursos == null || cursos.empty}" class="text-center empty-state">
+				<div class="mb-4">
+					<i class="fas fa-book fa-5x mb-3"></i>
+					<h4 class="text-muted">Nenhum curso cadastrado</h4>
+					<p class="text-muted">Comece criando o primeiro curso da sua plataforma.</p>
+				</div>
+				<a href="/curso/inserir" class="btn btn-warning btn-modern text-dark">
+					<i class="fas fa-plus me-2"></i>Criar Primeiro Curso
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
